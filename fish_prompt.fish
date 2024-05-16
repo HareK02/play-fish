@@ -3,23 +3,22 @@ function preexec --on-event fish_preexec
 end
 
 function postexec --on-event fish_postexec
+  set -l _status $status
   if test -z $_play_command_begin_time
     return
   end
 
   set -l code
-  if test $status -eq 0
+  if test $_status -eq 0
     set_color green
-    set code "✔success:$status"
+    set code "✔success:$_status"
   else
     set_color red
-    set code "✘error:$status"
+    set code "✘error:$_status"
   end
 
   set -l took_time
-  set -l millis
-
-  set millis (echo (date +%s%3N)"-$_play_command_begin_time" | bc)
+  set -l millis (echo (date +%s%3N)"-$_play_command_begin_time" | bc)
   if test $millis -ge 10000
     set took_time (echo "$millis/1000" | bc)s
   else if test $millis -ge 1000
@@ -40,3 +39,4 @@ function fish_prompt
   echo -e -s -n -- $now_date\ $who_n_where\ (set_color white)\|(set_color yellow)\ $pwd\n$enter_mark\ 
   set_color normal
 end
+
